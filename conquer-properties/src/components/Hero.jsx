@@ -113,16 +113,13 @@ export default function Hero() {
     <section className="hero" id="home" ref={sectionRef}>
       <div className="hero-media" aria-hidden="true">
         <div className="hero-media-track" ref={mediaRef}>
-          <img src="/images/hero.jpg?v=3" alt="" />
+          <img src="/images/hero.jpg?v=4" alt="" />
         </div>
       </div>
 
       <div className="hero-body">
         <div className="hero-content">
           <div className="hero-copy">
-            <p className="eyebrow hero-anim hero-anim-1">
-              {t.heroEyebrow} {PROJECT.location}
-            </p>
             <h1 className="hero-title">
               <span className="gold hero-anim hero-anim-2">{t.heroTitleGold}</span>
               <span className="hero-anim hero-anim-3">{t.heroTitleWhite}</span>

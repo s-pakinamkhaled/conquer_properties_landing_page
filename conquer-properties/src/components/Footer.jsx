@@ -41,6 +41,7 @@ export default function Footer() {
             <nav className="footer-links" aria-label="Footer">
               <a href="#home">{t.navHome}</a>
               <a href="#overview">{t.navOverview}</a>
+              <a href="#projects">{t.navProjects}</a>
               <a href="#contact">{t.contact}</a>
             </nav>
           </div>

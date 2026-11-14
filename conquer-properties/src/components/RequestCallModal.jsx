@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowRight, Mail, Phone, User } from './Icons'
+import { ArrowRight, Phone, User } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { submitLead } from '../lib/submitLead'
@@ -115,21 +115,7 @@ export default function RequestCallModal() {
           </div>
           <p className="call-modal-hint">{t.phoneHint}</p>
 
-          <label className="visually-hidden" htmlFor="modal-email">
-            {t.emailOptional}
-          </label>
-          <div className="call-modal-input">
-            <Mail />
-            <input
-              id="modal-email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder={t.emailOptional}
-              value={form.email}
-              onChange={onChange}
-            />
-          </div>
+
 
           <div className="call-modal-row">
             <div className="call-modal-input">

@@ -1,3 +1,4 @@
+
 export const translations = {
   en: {
     dir: 'ltr',
@@ -5,11 +6,12 @@ export const translations = {
     switchTo: 'ar',
     brand: 'Conquer Properties',
     navHome: 'Home',
-    navOverview: 'Overview',
+    navProjects: 'PROJECTS',
     navContact: 'Contact',
     contactUs: 'Contact Us',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
+
     heroEyebrow: 'A distinctive address in',
     heroTitleGold: 'Where refined living',
     heroTitleWhite: 'finds its place.',
@@ -17,6 +19,7 @@ export const translations = {
       'Discover thoughtfully designed residences, considered amenities, and a setting made for the life ahead.',
     viewHomes: 'View Available Homes',
     requestCall: 'Request a Call',
+
     leadBadge: 'Free callback',
     leadTitle: 'Tell us what you need. We’ll call you.',
     leadText: 'Leave your details and our advisor will reach out with matching options.',
@@ -29,6 +32,7 @@ export const translations = {
     modalSubmit: 'Get prices',
     modalDisclaimer: 'By submitting you agree to be contacted about this project. No booking commitment.',
     closeModal: 'Close',
+
     fullName: 'Full name',
     fullNamePlaceholder: 'Your full name',
     phone: 'Phone number',
@@ -53,6 +57,7 @@ export const translations = {
     penthouse: 'Penthouse',
     villa: 'Villa',
     chalet: 'Chalet',
+
     callMeBack: 'Get the prices',
     sending: 'Sending…',
     leadNote: 'Usually within one business day',
@@ -60,10 +65,12 @@ export const translations = {
     errFormspree: 'Could not send the form. Please try again.',
     successMsg: 'Got it — we will call you soon.',
     errorMsg: 'Something went wrong. Please try again.',
+
     scrollHint: 'Scroll to discover',
     ctaTitle: 'Your next chapter could start here.',
     ctaText: 'Receive current availability and arrange a private consultation with our team.',
     exploreOptions: 'Explore Your Options',
+
     footerTagline: 'Clear guidance to help you choose the right home with confidence.',
     explore: 'Explore',
     theProject: 'The project',
@@ -76,6 +83,7 @@ export const translations = {
     whatsappText: 'WhatsApp sales team',
     whatsappMessage:
       'Hello Conquer Properties — I would like to ask about available homes.',
+
     overviewEyebrow: '01 / Overview',
     overviewTitle: 'Who we are',
     overviewLead:
@@ -104,18 +112,98 @@ export const translations = {
     overviewImageAlt: 'Modern residential community',
     overviewMediaLabel: 'Client-first approach',
     overviewMediaValue: 'Since 2020 across Egypt',
+
+    // PROJECTS SECTION
+    projectsEyebrow: '02 / Featured Developments',
+    projectsTitle: 'A Place Beyond Expectations',
+    projectsSubtitle:
+      'Explore distinctive developments and discover spaces designed around the way you want to live.',
+
+    // MODON
+    modonKicker: 'Featured Project',
+    modonEyebrow: 'The Destination',
+    modonTitle: 'MODON RAS EL HEKMA',
+    modonLead:
+      'Discover a coastal destination where architecture meets the beauty of seaside living.',
+    modonBody:
+      'Explore thoughtfully designed spaces, beautiful surroundings, and a setting created for memorable moments.',
+    modonClose:
+      'Discover a new vision of coastal living with MODON.',
+    modonTag1: 'Coastal Living',
+    modonTag2: 'Modern Architecture',
+    modonTag3: 'Lifestyle Destination',
+    modonTag4: 'Premium Residences',
+    modonCta: 'Enquire About MODON',
+
+    modonShot1Title: 'A New Coastal Perspective',
+    modonShot1Text: 'Discover the destination from a different perspective.',
+    modonShot2Title: 'Architectural Elegance',
+    modonShot2Text: 'A closer look at the architectural details.',
+    modonShot3Title: 'The Coastal Landscape',
+    modonShot3Text: 'Explore the beauty of the surrounding coastline.',
+    modonShot4Title: 'Designed Communities',
+    modonShot4Text: 'Spaces that bring communities together.',
+    modonShot5Title: 'Seaside Views',
+    modonShot5Text: 'Experience the beauty of the sea.',
+    modonShot6Title: 'Resort Living',
+    modonShot6Text: 'A lifestyle inspired by the coast.',
+    modonShot7Title: 'The Waterfront',
+    modonShot7Text: 'Discover the waterfront surroundings.',
+    modonShot8Title: 'Aerial Perspective',
+    modonShot8Text: 'Explore the destination from above.',
+    modonShot9Title: 'Coastal Architecture',
+    modonShot9Text: 'Architecture shaped by its surroundings.',
+    modonShot10Title: 'Open Spaces',
+    modonShot10Text: 'Discover thoughtfully arranged outdoor spaces.',
+    modonShot11Title: 'The Destination',
+    modonShot11Text: 'A closer look at the wider development.',
+    modonShot12Title: 'Beachfront Living',
+    modonShot12Text: 'Enjoy the atmosphere of coastal living.',
+    modonShot13Title: 'Modern Residences',
+    modonShot13Text: 'Explore the residential architecture.',
+    modonShot14Title: 'Natural Surroundings',
+    modonShot14Text: 'Where open spaces meet the coastline.',
+    modonShot15Title: 'Coastal Details',
+    modonShot15Text: 'Discover more details of the destination.',
+    modonShot16Title: 'A Different Way to Live',
+    modonShot16Text: 'Experience a distinctive coastal lifestyle.',
+
+    // CITY GATE BY QATARI DIAR
+    cityGateKicker: 'Featured Development',
+    cityGateEyebrow: 'BY QATARI DIAR',
+    cityGateTitle: 'CITY GATE',
+    cityGateLead: 'Luxury Meets Nature',
+    cityGateBody:
+      'Imagine waking up to breathtaking golf course views and living in a community where luxury meets nature. City Gate offers an exclusive lifestyle in New Cairo, featuring a spectacular 18-hole golf course, lush green landscapes, elegant residences, and world-class amenities.',
+    cityGateClose:
+      'Live beyond expectations. Invest in a lifestyle that stands out.',
+    cityGateTag1: '18-Hole Golf Course',
+    cityGateTag2: 'Lush Green Landscapes',
+    cityGateTag3: 'Elegant Residences',
+    cityGateTag4: 'World-Class Amenities',
+    cityGateCta: 'Enquire About City Gate',
+    cityGateShot1Title: 'City Gate',
+    cityGateShot1Text: 'Discover the City Gate lifestyle.',
+    cityGateShot2Title: 'Golf Course Views',
+    cityGateShot2Text: 'Enjoy breathtaking golf course views.',
+    cityGateShot3Title: 'Green Landscapes',
+    cityGateShot3Text: 'Experience beautiful green surroundings.',
+    cityGateShot4Title: 'Luxury Living',
+    cityGateShot4Text: 'Discover an exclusive residential lifestyle.',
   },
+
   ar: {
     dir: 'rtl',
     langLabel: 'English',
     switchTo: 'en',
     brand: 'كونكر بروبرتيز',
     navHome: 'الرئيسية',
-    navOverview: 'نظرة عامة',
+    navProjects: 'المشاريع',
     navContact: 'تواصل',
     contactUs: 'تواصل معنا',
     openMenu: 'فتح القائمة',
     closeMenu: 'إغلاق القائمة',
+
     heroEyebrow: 'عنوان مميز في',
     heroTitleGold: 'حيث تبدأ الحياة الراقية',
     heroTitleWhite: 'مكانها الحقيقي.',
@@ -123,6 +211,7 @@ export const translations = {
       'اكتشف وحدات سكنية مصممة بعناية، ومرافق مدروسة، ومكانًا يليق بحياتك القادمة.',
     viewHomes: 'عرض الوحدات المتاحة',
     requestCall: 'اطلب مكالمة',
+
     leadBadge: 'اتصال مجاني',
     leadTitle: 'أخبرنا بما تحتاجه. وسنتصل بك.',
     leadText: 'اترك بياناتك وسيتواصل معك مستشارنا بأفضل الخيارات المتاحة.',
@@ -135,6 +224,7 @@ export const translations = {
     modalSubmit: 'اعرف الأسعار',
     modalDisclaimer: 'بإرسال النموذج توافق على التواصل معك بخصوص المشروع. لا يوجد التزام بالحجز.',
     closeModal: 'إغلاق',
+
     fullName: 'الاسم بالكامل',
     fullNamePlaceholder: 'اسمك بالكامل',
     phone: 'رقم الهاتف',
@@ -159,6 +249,7 @@ export const translations = {
     penthouse: 'بنتهاوس',
     villa: 'فيلا',
     chalet: 'شاليه',
+
     callMeBack: 'اعرف الأسعار',
     sending: 'جاري الإرسال…',
     leadNote: 'عادة خلال يوم عمل واحد',
@@ -166,10 +257,12 @@ export const translations = {
     errFormspree: 'تعذر إرسال النموذج. حاول مرة أخرى.',
     successMsg: 'تم الاستلام — سنتصل بك قريبًا.',
     errorMsg: 'حدث خطأ. حاول مرة أخرى.',
+
     scrollHint: 'اسحب للاكتشاف',
     ctaTitle: 'فصل حياتك القادم قد يبدأ من هنا.',
     ctaText: 'احصل على التوافر الحالي ورتّب استشارة خاصة مع فريقنا.',
     exploreOptions: 'استكشف خياراتك',
+
     footerTagline: 'إرشاد واضح يساعدك على اختيار المنزل المناسب بثقة.',
     explore: 'استكشف',
     theProject: 'المشروع',
@@ -181,6 +274,7 @@ export const translations = {
     whatsappLabel: 'واتساب فريق المبيعات',
     whatsappText: 'واتساب فريق المبيعات',
     whatsappMessage: 'مرحبًا كونكر بروبرتيز — أود الاستفسار عن الوحدات المتاحة.',
+
     overviewEyebrow: '01 / نظرة عامة',
     overviewTitle: 'من نحن',
     overviewLead:
@@ -209,5 +303,83 @@ export const translations = {
     overviewImageAlt: 'مجتمع سكني حديث',
     overviewMediaLabel: 'نهج يضع العميل أولاً',
     overviewMediaValue: 'منذ 2020 في أنحاء مصر',
+
+    // PROJECTS SECTION
+    projectsEyebrow: '02 / مشروعات مميزة',
+    projectsTitle: 'وجهات تتجاوز التوقعات',
+    projectsSubtitle:
+      'اكتشف مشروعات عقارية مميزة ومساحات مصممة لتناسب أسلوب حياتك.',
+
+    // MODON
+    modonKicker: 'مشروع مميز',
+    modonEyebrow: 'الوجهة',
+    modonTitle: 'MODON رأس الحكمة',
+    modonLead:
+      'اكتشف وجهة ساحلية تجمع بين روعة التصميم وجمال الحياة على البحر.',
+    modonBody:
+      'مساحات مصممة بعناية، وإطلالات مميزة، وأجواء تمنحك تجربة معيشية استثنائية.',
+    modonClose:
+      'اكتشف مفهومًا جديدًا للحياة الساحلية مع MODON.',
+    modonTag1: 'حياة ساحلية',
+    modonTag2: 'تصميم معماري عصري',
+    modonTag3: 'وجهة متكاملة',
+    modonTag4: 'وحدات سكنية مميزة',
+    modonCta: 'استفسر عن MODON',
+
+    modonShot1Title: 'رؤية جديدة للساحل',
+    modonShot1Text: 'اكتشف الوجهة من منظور مختلف.',
+    modonShot2Title: 'أناقة التصميم',
+    modonShot2Text: 'تفاصيل معمارية تعكس جمال التصميم.',
+    modonShot3Title: 'جمال الطبيعة الساحلية',
+    modonShot3Text: 'استمتع بجمال الطبيعة المحيطة.',
+    modonShot4Title: 'مجتمعات متكاملة',
+    modonShot4Text: 'مساحات تجمع بين الراحة والحياة الاجتماعية.',
+    modonShot5Title: 'إطلالات بحرية',
+    modonShot5Text: 'استمتع بجمال البحر.',
+    modonShot6Title: 'حياة بطابع المنتجعات',
+    modonShot6Text: 'أسلوب حياة مستوحى من أجواء الساحل.',
+    modonShot7Title: 'الواجهة البحرية',
+    modonShot7Text: 'اكتشف جمال المناطق المحيطة بالبحر.',
+    modonShot8Title: 'منظور جوي',
+    modonShot8Text: 'شاهد تفاصيل الوجهة من الأعلى.',
+    modonShot9Title: 'عمارة ساحلية',
+    modonShot9Text: 'تصميم معماري ينسجم مع الطبيعة.',
+    modonShot10Title: 'مساحات مفتوحة',
+    modonShot10Text: 'مساحات خارجية مصممة بعناية.',
+    modonShot11Title: 'الوجهة المتكاملة',
+    modonShot11Text: 'اكتشف المزيد من تفاصيل المشروع.',
+    modonShot12Title: 'حياة على الشاطئ',
+    modonShot12Text: 'استمتع بأجواء الحياة الساحلية.',
+    modonShot13Title: 'وحدات عصرية',
+    modonShot13Text: 'اكتشف التصميمات السكنية.',
+    modonShot14Title: 'الطبيعة المحيطة',
+    modonShot14Text: 'حيث تلتقي المساحات المفتوحة بالساحل.',
+    modonShot15Title: 'تفاصيل ساحلية',
+    modonShot15Text: 'اكتشف المزيد من تفاصيل الوجهة.',
+    modonShot16Title: 'أسلوب حياة مختلف',
+    modonShot16Text: 'استمتع بتجربة ساحلية مميزة.',
+
+    // CITY GATE BY QATARI DIAR
+    cityGateKicker: 'مشروع مميز',
+    cityGateEyebrow: 'من تطوير قطري ديار',
+    cityGateTitle: 'CITY GATE',
+    cityGateLead: 'حيث تلتقي الفخامة بالطبيعة',
+    cityGateBody:
+      'تخيل أن تستيقظ كل يوم على إطلالات خلابة على ملعب الجولف، وتعيش في مجتمع يجمع بين الفخامة والطبيعة. يقدم سيتي جيت أسلوب حياة استثنائيًا في القاهرة الجديدة، مع ملعب جولف عالمي مكون من 18 حفرة، ومساحات خضراء واسعة، ووحدات سكنية أنيقة، ومرافق عالمية المستوى.',
+    cityGateClose:
+      'عِش تجربة تتجاوز التوقعات واستثمر في أسلوب حياة استثنائي.',
+    cityGateTag1: 'ملعب جولف 18 حفرة',
+    cityGateTag2: 'مساحات خضراء واسعة',
+    cityGateTag3: 'وحدات سكنية أنيقة',
+    cityGateTag4: 'مرافق عالمية',
+    cityGateCta: 'استفسر عن سيتي جيت',
+    cityGateShot1Title: 'سيتي جيت',
+    cityGateShot1Text: 'اكتشف أسلوب الحياة في سيتي جيت.',
+    cityGateShot2Title: 'إطلالات ملعب الجولف',
+    cityGateShot2Text: 'استمتع بإطلالات خلابة على ملعب الجولف.',
+    cityGateShot3Title: 'مساحات خضراء',
+    cityGateShot3Text: 'استمتع بالطبيعة والمساحات الخضراء.',
+    cityGateShot4Title: 'حياة فاخرة',
+    cityGateShot4Text: 'اكتشف تجربة سكنية استثنائية.',
   },
 }
