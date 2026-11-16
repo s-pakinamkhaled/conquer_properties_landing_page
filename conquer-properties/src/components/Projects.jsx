@@ -1,8 +1,12 @@
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ArrowRight } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
+import {
+  trackProjectView,
+  trackCustomEvent,
+} from '../utils/metaTracking'
 
 const MODON_GALLERY = Array.from({ length: 16 }, (_, i) => ({
   src: `/images/modon/modon-${String(i + 1).padStart(2, '0')}.jpg`,
@@ -91,7 +95,7 @@ function ProjectCard({
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActive(current => (current + 1) % gallery.length)
+      setActive((current) => (current + 1) % gallery.length)
     }, 4000)
 
     return () => clearInterval(timer)
@@ -99,11 +103,29 @@ function ProjectCard({
 
   const shot = gallery[active]
 
+  const handleEnquiry = () => {
+    trackCustomEvent('ProjectEnquiryClick', {
+      project_name: brand,
+    })
+
+    openModal()
+  }
+
+  const handleGalleryClick = (index) => {
+    trackCustomEvent('ProjectGalleryImageClick', {
+      project_name: brand,
+      image_number: index + 1,
+    })
+
+    setActive(index)
+  }
+
   return (
-    <article className="project-showcase">
-
+    <article
+      className="project-showcase"
+      data-track-project={brand}
+    >
       <div className="project-info">
-
         <span className="project-label">
           {kicker}
         </span>
@@ -137,18 +159,18 @@ function ProjectCard({
         <button
           type="button"
           className="btn btn-gold"
-          onClick={openModal}
+          onClick={handleEnquiry}
         >
           {cta}
           <ArrowRight />
         </button>
-
       </div>
 
       <div className="project-gallery">
-
-        <div className="project-main-image" key={shot.src}>
-
+        <div
+          className="project-main-image"
+          key={shot.src}
+        >
           <img
             src={shot.src}
             alt={title}
@@ -163,9 +185,10 @@ function ProjectCard({
 
           <div className="project-counter">
             {String(active + 1).padStart(2, '0')}
-            <span> / {String(gallery.length).padStart(2, '0')}</span>
+            <span>
+              {' '}/ {String(gallery.length).padStart(2, '0')}
+            </span>
           </div>
-
         </div>
 
         <div className="project-thumbnails">
@@ -175,11 +198,15 @@ function ProjectCard({
               type="button"
               className={`project-thumbnail ${index === active ? 'active' : ''
                 }`}
-              onClick={() => setActive(index)}
+              onClick={() => handleGalleryClick(index)}
               aria-label={`View ${brand} image ${index + 1}`}
               aria-pressed={index === active}
             >
-              <img src={item.src} alt="" loading="lazy" />
+              <img
+                src={item.src}
+                alt=""
+                loading="lazy"
+              />
             </button>
           ))}
         </div>
@@ -188,11 +215,11 @@ function ProjectCard({
           <span>
             {lang === 'ar' ? 'اكتشف المشروع' : 'EXPLORE THE PROJECT'}
           </span>
+
           <span>
             {lang === 'ar' ? 'معرض صور تلقائي' : 'AUTOMATIC GALLERY'}
           </span>
         </div>
-
       </div>
     </article>
   )
@@ -201,6 +228,39 @@ function ProjectCard({
 export default function Projects() {
   const { t, lang } = useLanguage()
   const { openModal } = useCallModal()
+
+  const projectsRef = useRef(null)
+
+  // Track when each project becomes visible
+  useEffect(() => {
+    const elements = projectsRef.current?.querySelectorAll(
+      '[data-track-project]'
+    )
+
+    if (!elements?.length) return undefined
+
+    const viewed = new Set()
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const projectName = entry.target.dataset.trackProject
+
+            if (!viewed.has(projectName)) {
+              viewed.add(projectName)
+              trackProjectView(projectName)
+            }
+          }
+        })
+      },
+      { threshold: 0.5 }
+    )
+
+    elements.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [])
 
   const city = CITY_GATE_TEXT[lang] || CITY_GATE_TEXT.en
 
@@ -236,9 +296,12 @@ export default function Projects() {
   }
 
   return (
-    <section className="projects-v2" id="projects">
+    <section
+      className="projects-v2"
+      id="projects"
+      ref={projectsRef}
+    >
       <div className="container">
-
         <div className="projects-v2-heading">
           <span className="projects-v2-eyebrow">
             {t.projectsEyebrow}
@@ -262,7 +325,6 @@ export default function Projects() {
           openModal={openModal}
           lang={lang}
         />
-
       </div>
     </section>
   )

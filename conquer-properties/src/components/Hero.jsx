@@ -1,9 +1,16 @@
+
 import { useEffect, useRef, useState } from 'react'
+
 import { PROJECT } from '../config'
 import { ArrowRight, Phone, User } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { submitLead } from '../lib/submitLead'
+
+import {
+  trackEvent,
+  trackCustomEvent,
+} from '../utils/metaTracking'
 
 const initial = {
   fullName: '',
@@ -16,18 +23,26 @@ const initial = {
 export default function Hero() {
   const { t, lang } = useLanguage()
   const { openModal } = useCallModal()
+
   const sectionRef = useRef(null)
   const mediaRef = useRef(null)
+  const formStartedRef = useRef(false)
+
   const [form, setForm] = useState(initial)
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
 
+  // Hero animation
   useEffect(() => {
     const section = sectionRef.current
     const media = mediaRef.current
+
     if (!section || !media) return undefined
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+
     if (reduceMotion) {
       section.classList.add('hero-ready')
       return undefined
@@ -45,12 +60,19 @@ export default function Hero() {
     const animate = () => {
       currentX += (targetX - currentX) * 0.045
       currentY += (targetY - currentY) * 0.045
-      media.style.transform = `translate3d(${currentX * 10}px, ${currentY * 6 + scrollY * 0.1}px, 0) scale(1.06)`
+
+      media.style.transform = `translate3d(
+        ${currentX * 10}px,
+        ${currentY * 6 + scrollY * 0.1}px,
+        0
+      ) scale(1.06)`
+
       raf = requestAnimationFrame(animate)
     }
 
     const onMove = (e) => {
       const rect = section.getBoundingClientRect()
+
       targetX = (e.clientX - rect.left) / rect.width - 0.5
       targetY = (e.clientY - rect.top) / rect.height - 0.5
     }
@@ -60,8 +82,15 @@ export default function Hero() {
     }
 
     raf = requestAnimationFrame(animate)
-    section.addEventListener('pointermove', onMove, { passive: true })
-    window.addEventListener('scroll', onScroll, { passive: true })
+
+    section.addEventListener('pointermove', onMove, {
+      passive: true,
+    })
+
+    window.addEventListener('scroll', onScroll, {
+      passive: true,
+    })
+
     onScroll()
 
     return () => {
@@ -71,11 +100,29 @@ export default function Hero() {
     }
   }, [])
 
-  const onChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+  // Track the first interaction with the Hero form
+  const handleFormStart = () => {
+    if (formStartedRef.current) return
+
+    formStartedRef.current = true
+
+    trackCustomEvent('FormStart', {
+      form_name: 'Hero Contact Form',
+      form_location: 'Hero Section',
+    })
   }
 
+  // Form input changes
+  const onChange = (e) => {
+    const { name, value } = e.target
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  // Submit Hero lead form
   const onQuickSubmit = async (e) => {
     e.preventDefault()
 
@@ -100,19 +147,50 @@ export default function Hero() {
         _subject: `Conquer Properties — new request from ${form.fullName}`,
       })
 
+      // Track Lead only after successful submission
+      trackEvent('Lead', {
+        content_name: 'Hero Contact Form',
+        content_category: 'Real Estate',
+      })
+
       setStatus('success')
       setMessage(t.successMsg)
       setForm(initial)
+      formStartedRef.current = false
     } catch {
       setStatus('error')
       setMessage(t.errorMsg)
     }
   }
 
+  // Track Request a Call button
+  const handleRequestCall = () => {
+    trackEvent('Contact', {
+      content_name: 'Hero Request a Call',
+    })
+
+    openModal()
+  }
+
+  // Track View Homes button
+  const handleViewHomes = () => {
+    trackCustomEvent('HeroViewHomesClick', {
+      button_name: 'View Homes',
+      section: 'Hero',
+    })
+  }
+
   return (
-    <section className="hero" id="home" ref={sectionRef}>
+    <section
+      className="hero"
+      id="home"
+      ref={sectionRef}
+    >
       <div className="hero-media" aria-hidden="true">
-        <div className="hero-media-track" ref={mediaRef}>
+        <div
+          className="hero-media-track"
+          ref={mediaRef}
+        >
           <img src="/images/hero.jpg?v=4" alt="" />
         </div>
       </div>
@@ -121,16 +199,34 @@ export default function Hero() {
         <div className="hero-content">
           <div className="hero-copy">
             <h1 className="hero-title">
-              <span className="gold hero-anim hero-anim-2">{t.heroTitleGold}</span>
-              <span className="hero-anim hero-anim-3">{t.heroTitleWhite}</span>
+              <span className="gold hero-anim hero-anim-2">
+                {t.heroTitleGold}
+              </span>
+
+              <span className="hero-anim hero-anim-3">
+                {t.heroTitleWhite}
+              </span>
             </h1>
-            <p className="hero-text hero-anim hero-anim-4">{t.heroText}</p>
+
+            <p className="hero-text hero-anim hero-anim-4">
+              {t.heroText}
+            </p>
+
             <div className="hero-actions hero-anim hero-anim-5">
-              <a href="#contact" className="btn btn-gold">
+              <a
+                href="#contact"
+                className="btn btn-gold"
+                onClick={handleViewHomes}
+              >
                 {t.viewHomes}
                 <ArrowRight />
               </a>
-              <button type="button" className="btn btn-ghost" onClick={openModal}>
+
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={handleRequestCall}
+              >
                 <Phone />
                 {t.requestCall}
               </button>
@@ -142,20 +238,41 @@ export default function Hero() {
             id="contact"
             aria-label={t.navContact}
           >
-            <div className="hero-lead-frame" aria-hidden="true" />
-            <div className="hero-lead-shine" aria-hidden="true" />
+            <div
+              className="hero-lead-frame"
+              aria-hidden="true"
+            />
+
+            <div
+              className="hero-lead-shine"
+              aria-hidden="true"
+            />
 
             <div className="hero-lead-header">
-              <p className="hero-lead-badge">{t.leadBadge}</p>
+              <p className="hero-lead-badge">
+                {t.leadBadge}
+              </p>
+
               <h2>{t.leadTitle}</h2>
-              <p className="hero-lead-text">{t.leadText}</p>
+
+              <p className="hero-lead-text">
+                {t.leadText}
+              </p>
             </div>
 
-            <form className="hero-lead-form" onSubmit={onQuickSubmit}>
+            <form
+              className="hero-lead-form"
+              onSubmit={onQuickSubmit}
+              onFocusCapture={handleFormStart}
+            >
               <div className="hero-lead-field">
-                <label htmlFor="hero-fullName">{t.fullName}</label>
+                <label htmlFor="hero-fullName">
+                  {t.fullName}
+                </label>
+
                 <div className="hero-lead-input">
                   <User />
+
                   <input
                     id="hero-fullName"
                     name="fullName"
@@ -169,9 +286,13 @@ export default function Hero() {
               </div>
 
               <div className="hero-lead-field">
-                <label htmlFor="hero-phone">{t.phone}</label>
+                <label htmlFor="hero-phone">
+                  {t.phone}
+                </label>
+
                 <div className="hero-lead-input">
                   <Phone />
+
                   <input
                     id="hero-phone"
                     name="phone"
@@ -187,7 +308,10 @@ export default function Hero() {
               </div>
 
               <div className="hero-lead-field">
-                <label htmlFor="hero-location">{t.location}</label>
+                <label htmlFor="hero-location">
+                  {t.location}
+                </label>
+
                 <div className="hero-lead-input">
                   <select
                     id="hero-location"
@@ -196,17 +320,31 @@ export default function Hero() {
                     onChange={onChange}
                     required
                   >
-                    <option value="">{t.selectLocation}</option>
-                    <option value="New Cairo">{t.newCairo}</option>
-                    <option value="Zayed">{t.zayed}</option>
-                    <option value="North Coast">{t.northCoast}</option>
+                    <option value="">
+                      {t.selectLocation}
+                    </option>
+
+                    <option value="New Cairo">
+                      {t.newCairo}
+                    </option>
+
+                    <option value="Zayed">
+                      {t.zayed}
+                    </option>
+
+                    <option value="North Coast">
+                      {t.northCoast}
+                    </option>
                   </select>
                 </div>
               </div>
 
               <div className="hero-lead-row">
                 <div className="hero-lead-field">
-                  <label htmlFor="hero-budget">{t.budget}</label>
+                  <label htmlFor="hero-budget">
+                    {t.budget}
+                  </label>
+
                   <div className="hero-lead-input">
                     <select
                       id="hero-budget"
@@ -215,17 +353,34 @@ export default function Hero() {
                       onChange={onChange}
                       required
                     >
-                      <option value="">{t.selectBudget}</option>
-                      <option value="Under 5M EGP">{t.budgetUnder5}</option>
-                      <option value="5M – 10M EGP">{t.budget5to10}</option>
-                      <option value="10M – 20M EGP">{t.budget10to20}</option>
-                      <option value="20M+ EGP">{t.budget20plus}</option>
+                      <option value="">
+                        {t.selectBudget}
+                      </option>
+
+                      <option value="Under 5M EGP">
+                        {t.budgetUnder5}
+                      </option>
+
+                      <option value="5M – 10M EGP">
+                        {t.budget5to10}
+                      </option>
+
+                      <option value="10M – 20M EGP">
+                        {t.budget10to20}
+                      </option>
+
+                      <option value="20M+ EGP">
+                        {t.budget20plus}
+                      </option>
                     </select>
                   </div>
                 </div>
 
                 <div className="hero-lead-field">
-                  <label htmlFor="hero-unitType">{t.unitType}</label>
+                  <label htmlFor="hero-unitType">
+                    {t.unitType}
+                  </label>
+
                   <div className="hero-lead-input">
                     <select
                       id="hero-unitType"
@@ -234,21 +389,53 @@ export default function Hero() {
                       onChange={onChange}
                       required
                     >
-                      <option value="">{t.selectType}</option>
-                      <option value="Apartment">{t.apartment}</option>
-                      <option value="Duplex">{t.duplex}</option>
-                      <option value="Townhouse">{t.townhouse}</option>
-                      <option value="Twin house">{t.twinHouse}</option>
-                      <option value="Penthouse">{t.penthouse}</option>
-                      <option value="Villa">{t.villa}</option>
-                      <option value="Chalet">{t.chalet}</option>
+                      <option value="">
+                        {t.selectType}
+                      </option>
+
+                      <option value="Apartment">
+                        {t.apartment}
+                      </option>
+
+                      <option value="Duplex">
+                        {t.duplex}
+                      </option>
+
+                      <option value="Townhouse">
+                        {t.townhouse}
+                      </option>
+
+                      <option value="Twin house">
+                        {t.twinHouse}
+                      </option>
+
+                      <option value="Penthouse">
+                        {t.penthouse}
+                      </option>
+
+                      <option value="Villa">
+                        {t.villa}
+                      </option>
+
+                      <option value="Chalet">
+                        {t.chalet}
+                      </option>
                     </select>
                   </div>
                 </div>
               </div>
 
-              <button className="hero-lead-submit" type="submit" disabled={status === 'loading'}>
-                <span>{status === 'loading' ? t.sending : t.callMeBack}</span>
+              <button
+                className="hero-lead-submit"
+                type="submit"
+                disabled={status === 'loading'}
+              >
+                <span>
+                  {status === 'loading'
+                    ? t.sending
+                    : t.callMeBack}
+                </span>
+
                 <ArrowRight />
               </button>
             </form>
@@ -256,19 +443,28 @@ export default function Hero() {
             <div className="hero-lead-footer">
               {message && (
                 <p
-                  className={`hero-lead-status ${status === 'success' ? 'success' : 'error'}`}
+                  className={`hero-lead-status ${status === 'success'
+                      ? 'success'
+                      : 'error'
+                    }`}
                   role="status"
                 >
                   {message}
                 </p>
               )}
-              <p className="hero-lead-note">{t.leadNote}</p>
+
+              <p className="hero-lead-note">
+                {t.leadNote}
+              </p>
             </div>
           </aside>
         </div>
       </div>
 
-      <div className="scroll-hint hero-anim hero-anim-6" aria-hidden="true">
+      <div
+        className="scroll-hint hero-anim hero-anim-6"
+        aria-hidden="true"
+      >
         <span className="scroll-hint-line" />
         {t.scrollHint}
       </div>

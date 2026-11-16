@@ -11,29 +11,46 @@ import WhatsAppFab from './components/WhatsAppFab'
 import RequestCallModal from './components/RequestCallModal'
 
 import { useReveal } from './hooks/useReveal'
-import { CallModalProvider, useCallModal } from './i18n/CallModalContext'
+import {
+  CallModalProvider,
+  useCallModal,
+} from './i18n/CallModalContext'
 import { LanguageProvider } from './i18n/LanguageContext'
+
+import { setupScrollTracking } from './utils/metaTracking'
 
 function AppShell() {
   useReveal()
 
   const { openModal } = useCallModal()
 
+  // Keep the existing automatic modal opening behavior
   useEffect(() => {
     openModal()
   }, [openModal])
 
+  // Setup Meta Pixel scroll tracking
+  useEffect(() => {
+    const cleanup = setupScrollTracking()
+
+    return cleanup
+  }, [])
+
   return (
     <>
       <Header />
+
       <main>
         <Hero />
         <Overview />
         <Projects />
         <CtaBanner />
       </main>
+
       <Footer />
+
       <WhatsAppFab />
+
       <RequestCallModal />
     </>
   )
