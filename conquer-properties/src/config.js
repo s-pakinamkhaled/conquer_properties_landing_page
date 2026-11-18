@@ -2,10 +2,11 @@
  * Form submissions are delivered to these emails via FormSubmit.
  * Each inbox must confirm once the first time (check spam for the activation email).
  */
+
 export const FORM_RECIPIENTS = [
+  'pakinamkhaled10@gmail.com',
   'abdelrhmanmammdoh536@gmail.com',
   'moamenabdelpaqi@gmail.com',
-  'pakinamkhaled10@gmail.com',
 ]
 
 export const FORM_ENDPOINT = `https://formsubmit.co/ajax/${FORM_RECIPIENTS[0]}`
