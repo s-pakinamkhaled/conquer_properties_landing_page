@@ -8,6 +8,10 @@ import {
   trackCustomEvent,
 } from '../utils/metaTracking'
 
+import {
+  trackOpenAIPhoneClick,
+} from '../utils/openaiTracking'
+
 const socials = [
   {
     name: 'Instagram',
@@ -30,7 +34,11 @@ export default function Footer() {
   const { t } = useLanguage()
 
   const handlePhoneClick = () => {
+    // Existing Meta tracking
     trackPhone('Footer')
+
+    // OpenAI Pixel tracking
+    trackOpenAIPhoneClick()
   }
 
   const handleSocialClick = (name) => {
@@ -69,10 +77,7 @@ export default function Footer() {
           <div className="footer-col">
             <h4>{t.explore}</h4>
 
-            <nav
-              className="footer-links"
-              aria-label="Footer"
-            >
+            <nav className="footer-links" aria-label="Footer">
               <a
                 href="#home"
                 onClick={() => handleNavigationClick('#home')}

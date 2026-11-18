@@ -1,5 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react'
+
 import { ArrowRight, Phone, User } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -10,6 +11,13 @@ import {
   trackLead,
   trackCustomEvent,
 } from '../utils/metaTracking'
+
+import {
+  trackOpenAILead,
+  trackOpenAIRequestCallFormOpened,
+  trackOpenAIRequestCallFormStarted,
+  trackOpenAIRequestCallFormFailed,
+} from '../utils/openaiTracking'
 
 const initial = {
   fullName: '',
@@ -30,7 +38,7 @@ export default function RequestCallModal() {
 
   const formStartedRef = useRef(false)
 
-  // Reset form and tracking when modal closes
+  // Reset form and track modal opening
   useEffect(() => {
     if (!open) {
       setStatus('idle')
@@ -43,6 +51,8 @@ export default function RequestCallModal() {
     trackCustomEvent('RequestCallModalOpen', {
       form_name: 'Request a Call Modal',
     })
+
+    trackOpenAIRequestCallFormOpened()
   }, [open])
 
   // Track first interaction with the form
@@ -52,6 +62,7 @@ export default function RequestCallModal() {
     formStartedRef.current = true
 
     trackFormStart('Request a Call Modal')
+    trackOpenAIRequestCallFormStarted()
   }
 
   if (!open) return null
@@ -65,6 +76,7 @@ export default function RequestCallModal() {
     }))
   }
 
+  // Submit Request a Call lead
   const onSubmit = async (e) => {
     e.preventDefault()
 
@@ -90,14 +102,22 @@ export default function RequestCallModal() {
         _subject: `Conquer Properties — call request from ${form.fullName}`,
       })
 
-      // Track Lead only after successful submission
+      // Track Meta Lead only after successful submission
       trackLead('Request a Call Modal')
+
+      // Track OpenAI Lead only after successful submission
+      trackOpenAILead()
 
       setStatus('success')
       setMessage(t.successMsg)
       setForm(initial)
       formStartedRef.current = false
-    } catch {
+    } catch (error) {
+      console.error('Request Call form submission failed:', error)
+
+      // Track actual submission failure
+      trackOpenAIRequestCallFormFailed()
+
       setStatus('error')
       setMessage(t.errorMsg)
     }

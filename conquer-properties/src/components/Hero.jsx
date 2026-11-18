@@ -1,7 +1,5 @@
 
 import { useEffect, useRef, useState } from 'react'
-
-import { PROJECT } from '../config'
 import { ArrowRight, Phone, User } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -11,6 +9,14 @@ import {
   trackEvent,
   trackCustomEvent,
 } from '../utils/metaTracking'
+
+import {
+  trackOpenAILead,
+  trackOpenAIHeroFormStarted,
+  trackOpenAIHeroFormFailed,
+  trackOpenAIViewHomesClick,
+  trackOpenAIRequestCallClick,
+} from '../utils/openaiTracking'
 
 const initial = {
   fullName: '',
@@ -106,10 +112,14 @@ export default function Hero() {
 
     formStartedRef.current = true
 
+    // Meta tracking
     trackCustomEvent('FormStart', {
       form_name: 'Hero Contact Form',
       form_location: 'Hero Section',
     })
+
+    // OpenAI tracking
+    trackOpenAIHeroFormStarted()
   }
 
   // Form input changes
@@ -147,17 +157,25 @@ export default function Hero() {
         _subject: `Conquer Properties — new request from ${form.fullName}`,
       })
 
-      // Track Lead only after successful submission
+      // Track Meta Lead only after successful submission
       trackEvent('Lead', {
         content_name: 'Hero Contact Form',
         content_category: 'Real Estate',
       })
 
+      // Track OpenAI Lead only after successful submission
+      trackOpenAILead()
+
       setStatus('success')
       setMessage(t.successMsg)
       setForm(initial)
       formStartedRef.current = false
-    } catch {
+    } catch (error) {
+      console.error('Hero form submission failed:', error)
+
+      // Track failed submission
+      trackOpenAIHeroFormFailed()
+
       setStatus('error')
       setMessage(t.errorMsg)
     }
@@ -169,6 +187,8 @@ export default function Hero() {
       content_name: 'Hero Request a Call',
     })
 
+    trackOpenAIRequestCallClick()
+
     openModal()
   }
 
@@ -178,6 +198,8 @@ export default function Hero() {
       button_name: 'View Homes',
       section: 'Hero',
     })
+
+    trackOpenAIViewHomesClick()
   }
 
   return (
@@ -443,9 +465,7 @@ export default function Hero() {
             <div className="hero-lead-footer">
               {message && (
                 <p
-                  className={`hero-lead-status ${status === 'success'
-                      ? 'success'
-                      : 'error'
+                  className={`hero-lead-status ${status === 'success' ? 'success' : 'error'
                     }`}
                   role="status"
                 >
