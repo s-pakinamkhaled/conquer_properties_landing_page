@@ -18,14 +18,13 @@ import {
 import { LanguageProvider } from './i18n/LanguageContext'
 
 import { setupScrollTracking } from './utils/metaTracking'
-import { trackOpenAIPageView } from './utils/openaiTracking'
 
 function AppShell() {
   useReveal()
 
   const { openModal } = useCallModal()
 
-  // Keep automatic modal opening
+  // Keep the existing automatic modal opening behavior
   useEffect(() => {
     openModal()
   }, [openModal])
@@ -34,11 +33,6 @@ function AppShell() {
   useEffect(() => {
     const cleanup = setupScrollTracking()
     return cleanup
-  }, [])
-
-  // Track OpenAI landing page view
-  useEffect(() => {
-    trackOpenAIPageView()
   }, [])
 
   return (
@@ -53,9 +47,7 @@ function AppShell() {
       </main>
 
       <Footer />
-
       <WhatsAppFab />
-
       <RequestCallModal />
     </>
   )
