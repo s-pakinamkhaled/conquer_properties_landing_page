@@ -1,5 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react'
+
 import { ArrowRight, Phone, User } from './Icons'
 import { useCallModal } from '../i18n/CallModalContext'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -112,13 +113,11 @@ export default function Hero() {
 
     formStartedRef.current = true
 
-    // Meta tracking
     trackCustomEvent('FormStart', {
       form_name: 'Hero Contact Form',
       form_location: 'Hero Section',
     })
 
-    // OpenAI tracking
     trackOpenAIHeroFormStarted()
   }
 
@@ -173,7 +172,6 @@ export default function Hero() {
     } catch (error) {
       console.error('Hero form submission failed:', error)
 
-      // Track failed submission
       trackOpenAIHeroFormFailed()
 
       setStatus('error')
@@ -188,7 +186,6 @@ export default function Hero() {
     })
 
     trackOpenAIRequestCallClick()
-
     openModal()
   }
 
@@ -284,6 +281,7 @@ export default function Hero() {
 
             <form
               className="hero-lead-form"
+              autoComplete="off"
               onSubmit={onQuickSubmit}
               onFocusCapture={handleFormStart}
             >
@@ -342,7 +340,7 @@ export default function Hero() {
                     onChange={onChange}
                     required
                   >
-                    <option value="">
+                    <option value="" disabled>
                       {t.selectLocation}
                     </option>
 
@@ -375,7 +373,7 @@ export default function Hero() {
                       onChange={onChange}
                       required
                     >
-                      <option value="">
+                      <option value="" disabled>
                         {t.selectBudget}
                       </option>
 
@@ -407,7 +405,7 @@ export default function Hero() {
                       onChange={onChange}
                       required
                     >
-                      <option value="">
+                      <option value="" disabled>
                         {t.selectType}
                       </option>
 
