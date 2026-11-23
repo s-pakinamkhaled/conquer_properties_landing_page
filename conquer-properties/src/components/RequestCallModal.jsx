@@ -296,11 +296,7 @@ export default function RequestCallModal() {
               <option value="">
                 {t.selectBudget}
               </option>
-
-              <option value="Under 10M EGP">
-                {t.budget5to10}
-              </option>
-
+              
               <option value="10M – 20M EGP">
                 {t.budget10to20}
               </option>
