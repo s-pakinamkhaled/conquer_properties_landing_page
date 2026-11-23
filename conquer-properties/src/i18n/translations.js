@@ -1,4 +1,3 @@
-
 export const translations = {
   en: {
     dir: 'ltr',
@@ -45,7 +44,7 @@ export const translations = {
     budget: 'Budget',
     selectBudget: 'Select budget',
     budgetUnder5: 'Under 5M EGP',
-    budget5to10: '5M – 10M EGP',
+    budget5to10: 'Under 10M EGP',
     budget10to20: '10M – 20M EGP',
     budget20plus: '20M+ EGP',
     unitType: 'Unit type',
@@ -237,7 +236,7 @@ export const translations = {
     budget: 'الميزانية',
     selectBudget: 'اختر الميزانية',
     budgetUnder5: 'أقل من 5 مليون ج.م',
-    budget5to10: '5 – 10 مليون ج.م',
+    budget5to10: 'أقل من 10 مليون ج.م',
     budget10to20: '10 – 20 مليون ج.م',
     budget20plus: 'أكثر من 20 مليون ج.م',
     unitType: 'نوع الوحدة',
@@ -382,4 +381,4 @@ export const translations = {
     cityGateShot4Title: 'حياة فاخرة',
     cityGateShot4Text: 'اكتشف تجربة سكنية استثنائية.',
   },
-}
+};
