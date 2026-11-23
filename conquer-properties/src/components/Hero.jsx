@@ -379,11 +379,7 @@ export default function Hero() {
                         {t.selectBudget}
                       </option>
 
-                      <option value="Under 5M EGP">
-                        {t.budgetUnder5}
-                      </option>
-
-                      <option value="5M – 10M EGP">
+                      <option value="Under 10M EGP">
                         {t.budget5to10}
                       </option>
 
