@@ -1,4 +1,6 @@
 
+import { FORM_ENDPOINT, FORM_RECIPIENTS } from '../config'
+
 function createEventId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID()
@@ -19,14 +21,9 @@ function getCookie(name) {
 }
 
 function getOpenAIMatchingData() {
-  if (typeof window === 'undefined') {
-    return {}
-  }
+  if (typeof window === 'undefined') return {}
 
-  // OpenAI stores the ad click reference in this first-party cookie.
   const oppref = getCookie('__oppref')
-
-  // Browser reference used for event matching.
   const obref = getCookie('__obref')
 
   return {
@@ -39,7 +36,10 @@ export async function submitLead(payload) {
   const eventId = createEventId()
   const matchingData = getOpenAIMatchingData()
 
-  const response = await fetch('/api/leads', {
+  // 1. Send the lead directly to FormSubmit from the browser.
+  const [, ...ccEmails] = FORM_RECIPIENTS
+
+  const formResponse = await fetch(FORM_ENDPOINT, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -48,19 +48,62 @@ export async function submitLead(payload) {
     body: JSON.stringify({
       ...payload,
       eventId,
-      ...matchingData,
-      sourceUrl: window.location.href,
+      _template: 'table',
+      _captcha: 'false',
+      _cc: ccEmails.join(','),
+      _url: window.location.href,
     }),
   })
 
-  const result = await response.json().catch(() => ({}))
+  const formResult = await formResponse.json().catch(() => ({}))
 
-  if (!response.ok || result.success !== true) {
-    throw new Error(result.message || 'Request failed')
+  if (
+    !formResponse.ok ||
+    formResult.success === false ||
+    formResult.success === 'false'
+  ) {
+    console.error('FormSubmit rejected the lead:', {
+      status: formResponse.status,
+      response: formResult,
+    })
+
+    throw new Error(
+      formResult.message || 'Unable to send your request. Please try again.'
+    )
+  }
+
+  // 2. Send the same lead to our server for OpenAI Conversions API.
+  // A CAPI failure must not turn a successfully emailed lead into a failed form.
+  let serverEventSent = false
+
+  try {
+    const apiResponse = await fetch('/api/leads', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...payload,
+        eventId,
+        ...matchingData,
+        sourceUrl: window.location.href,
+      }),
+    })
+
+    const apiResult = await apiResponse.json().catch(() => ({}))
+    serverEventSent = apiResponse.ok && apiResult.serverEventSent === true
+
+    if (!apiResponse.ok) {
+      console.error('OpenAI server event request failed:', apiResult)
+    }
+  } catch (error) {
+    console.error('OpenAI server event request failed:', error)
   }
 
   return {
-    ...result,
+    success: true,
     eventId,
+    serverEventSent,
   }
 }

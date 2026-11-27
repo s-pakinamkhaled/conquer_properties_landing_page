@@ -31,9 +31,8 @@ function normalizePhone(phone) {
         value = value.slice(2)
     }
 
-    // Convert Egyptian local mobile numbers to international format.
-    if (/^0?1[0125]\d{8}$/.test(value)) {
-        value = `20${value.replace(/^0/, '')}`
+    if (/^01[0125]\d{8}$/.test(value)) {
+        value = `20${value.slice(1)}`
     } else {
         value = value.replace(/^0+/, '')
     }
@@ -67,7 +66,6 @@ function getClientIp(req) {
 }
 
 export default async function handler(req, res) {
-    // Health check
     if (req.method === 'GET') {
         return res.status(200).json({
             success: true,
@@ -86,18 +84,12 @@ export default async function handler(req, res) {
     const {
         OPENAI_PIXEL_ID,
         OPENAI_CONVERSIONS_API_KEY,
-        FORM_ENDPOINT,
-        FORM_CC_EMAILS,
     } = process.env
 
-    if (
-        !OPENAI_PIXEL_ID ||
-        !OPENAI_CONVERSIONS_API_KEY ||
-        !FORM_ENDPOINT
-    ) {
+    if (!OPENAI_PIXEL_ID || !OPENAI_CONVERSIONS_API_KEY) {
         return res.status(500).json({
             success: false,
-            message: 'Server configuration is incomplete',
+            message: 'OpenAI server configuration is incomplete',
         })
     }
 
@@ -111,17 +103,6 @@ export default async function handler(req, res) {
 
     const email = normalizeEmail(body.email)
 
-    const location = body.location || 'Not specified'
-    const budget = body.budget || 'Not specified'
-    const unitType = body.unitType || 'Not specified'
-    const language = body.language || 'en'
-    const source = body.source || 'Website'
-
-    const subject =
-        typeof body._subject === 'string'
-            ? body._subject.trim().slice(0, 200)
-            : 'New lead from Conquer Properties'
-
     const eventId =
         typeof body.eventId === 'string' ? body.eventId.trim() : ''
 
@@ -130,23 +111,6 @@ export default async function handler(req, res) {
 
     const obref =
         typeof body.obref === 'string' ? body.obref.trim() : ''
-
-    let sourceUrl = SITE_URL
-
-    if (typeof body.sourceUrl === 'string') {
-        try {
-            const parsedUrl = new URL(body.sourceUrl)
-
-            if (
-                parsedUrl.protocol === 'https:' &&
-                parsedUrl.hostname === 'landing.conquerproperties.com'
-            ) {
-                sourceUrl = parsedUrl.href
-            }
-        } catch {
-            // Use the default website URL.
-        }
-    }
 
     if (!fullName || !phone || !eventId) {
         return res.status(400).json({
@@ -162,62 +126,10 @@ export default async function handler(req, res) {
         })
     }
 
-    // 1. Send the lead to the existing email recipients.
-    try {
-        const formResponse = await fetch(FORM_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                fullName,
-                phone,
-                email: email || 'Not provided',
-                location,
-                budget,
-                unitType,
-                language,
-                source,
-                _subject: subject,
-                _template: 'table',
-                _captcha: 'false',
-                _cc: FORM_CC_EMAILS || '',
-            }),
-        })
-
-        const formResult = await formResponse.json().catch(() => ({}))
-
-        if (
-            !formResponse.ok ||
-            formResult.success === false ||
-            formResult.success === 'false'
-        ) {
-            console.error('FormSubmit diagnostic:', {
-                status: formResponse.status,
-                response: formResult,
-            })
-
-            throw new Error('FormSubmit delivery failed')
-        }
-    } catch (error) {
-        console.error('Lead delivery failed:', error.message)
-
-        return res.status(502).json({
-            success: false,
-            message: 'Unable to submit your request. Please try again.',
-        })
-    }
-
-    // 2. Prepare matching information for OpenAI.
     const nameParts = fullName.split(/\s+/).filter(Boolean)
 
-    const firstName = normalizeName(nameParts[0] || '')
-    const lastName = normalizeName(nameParts.slice(1).join(' '))
-
-    const normalizedPhone = normalizePhone(phone)
-
     const user = {}
+    const normalizedPhone = normalizePhone(phone)
 
     if (email) {
         user.emails_sha256 = [sha256(email)]
@@ -227,6 +139,9 @@ export default async function handler(req, res) {
         user.phone_numbers_sha256 = [sha256(normalizedPhone)]
     }
 
+    const firstName = normalizeName(nameParts[0] || '')
+    const lastName = normalizeName(nameParts.slice(1).join(' '))
+
     if (firstName) {
         user.first_names_sha256 = [sha256(firstName)]
     }
@@ -235,7 +150,6 @@ export default async function handler(req, res) {
         user.last_names_sha256 = [sha256(lastName)]
     }
 
-    // obref belongs inside the user object.
     if (obref) {
         user.obref = obref
     }
@@ -251,30 +165,43 @@ export default async function handler(req, res) {
         user.user_agent = userAgent.trim()
     }
 
-    // 3. Send the confirmed lead to OpenAI Conversions API.
-    let serverEventSent = false
+    let sourceUrl = SITE_URL
+
+    if (typeof body.sourceUrl === 'string') {
+        try {
+            const parsedUrl = new URL(body.sourceUrl)
+
+            if (
+                parsedUrl.protocol === 'https:' &&
+                parsedUrl.hostname === 'landing.conquerproperties.com'
+            ) {
+                sourceUrl = parsedUrl.href
+            }
+        } catch {
+            // Keep the default website URL.
+        }
+    }
+
+    const event = {
+        id: eventId,
+        type: 'lead_created',
+        timestamp_ms: Date.now(),
+        action_source: 'web',
+        source_url: sourceUrl,
+        data: {
+            type: 'customer_action',
+        },
+    }
+
+    if (oppref) {
+        event.oppref = oppref
+    }
+
+    if (Object.keys(user).length > 0) {
+        event.user = user
+    }
 
     try {
-        const event = {
-            id: eventId,
-            type: 'lead_created',
-            timestamp_ms: Date.now(),
-            action_source: 'web',
-            source_url: sourceUrl,
-            data: {
-                type: 'customer_action',
-            },
-        }
-
-        // oppref belongs at the event level.
-        if (oppref) {
-            event.oppref = oppref
-        }
-
-        if (Object.keys(user).length > 0) {
-            event.user = user
-        }
-
         const capiResponse = await fetch(
             `${OPENAI_CAPI_URL}?pid=${encodeURIComponent(OPENAI_PIXEL_ID)}`,
             {
@@ -290,26 +217,36 @@ export default async function handler(req, res) {
             }
         )
 
-        if (!capiResponse.ok) {
-            const errorText = await capiResponse.text()
+        const responseText = await capiResponse.text()
 
+        if (!capiResponse.ok) {
             console.error(
                 'OpenAI CAPI rejected event:',
                 capiResponse.status,
-                errorText
+                responseText
             )
-        } else {
-            serverEventSent = true
+
+            return res.status(502).json({
+                success: false,
+                serverEventSent: false,
+                message: 'OpenAI conversion event was rejected',
+            })
         }
+
+        console.log('OpenAI CAPI response:', responseText)
+
+        return res.status(200).json({
+            success: true,
+            eventId,
+            serverEventSent: true,
+        })
     } catch (error) {
         console.error('OpenAI CAPI request failed:', error.message)
-    }
 
-    // 4. Return the result to React.
-    return res.status(200).json({
-        success: true,
-        eventId,
-        serverEventSent,
-        message: 'Lead submitted successfully',
-    })
+        return res.status(502).json({
+            success: false,
+            serverEventSent: false,
+            message: 'OpenAI conversion request failed',
+        })
+    }
 }
