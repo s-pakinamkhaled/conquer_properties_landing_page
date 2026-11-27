@@ -193,6 +193,11 @@ export default async function handler(req, res) {
             formResult.success === false ||
             formResult.success === 'false'
         ) {
+            console.error('FormSubmit diagnostic:', {
+                status: formResponse.status,
+                response: formResult,
+            })
+
             throw new Error('FormSubmit delivery failed')
         }
     } catch (error) {
