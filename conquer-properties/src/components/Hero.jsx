@@ -145,7 +145,7 @@ export default function Hero() {
     setMessage('')
 
     try {
-      await submitLead({
+      const result = await submitLead({
         fullName: form.fullName,
         phone: form.phone,
         location: form.location || 'Not specified',
@@ -163,7 +163,7 @@ export default function Hero() {
       })
 
       // Track OpenAI Lead only after successful submission
-      trackOpenAILead()
+      trackOpenAILead(result.eventId)
 
       setStatus('success')
       setMessage(t.successMsg)
@@ -375,10 +375,6 @@ export default function Hero() {
                     >
                       <option value="" disabled>
                         {t.selectBudget}
-                      </option>
-
-                      <option value="Under 10M EGP">
-                        Under 10M EGP
                       </option>
 
                       <option value="10M – 20M EGP">

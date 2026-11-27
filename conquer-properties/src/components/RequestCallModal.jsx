@@ -90,7 +90,7 @@ export default function RequestCallModal() {
     setMessage('')
 
     try {
-      await submitLead({
+      const result = await submitLead({
         fullName: form.fullName,
         phone: form.phone,
         email: form.email || 'Not provided',
@@ -106,7 +106,7 @@ export default function RequestCallModal() {
       trackLead('Request a Call Modal')
 
       // Track OpenAI Lead only after successful submission
-      trackOpenAILead()
+      trackOpenAILead(result.eventId)
 
       setStatus('success')
       setMessage(t.successMsg)

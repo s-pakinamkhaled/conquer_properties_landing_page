@@ -37,17 +37,25 @@ export function trackOpenAIPageView() {
 }
 
 // Successful Lead only
-export function trackOpenAILead() {
+export function trackOpenAILead(eventId) {
     if (
         typeof window === 'undefined' ||
-        typeof window.oaiq !== 'function'
+        typeof window.oaiq !== 'function' ||
+        !eventId
     ) {
         return
     }
 
-    window.oaiq('measure', 'lead_created', {
-        type: 'customer_action',
-    })
+    window.oaiq(
+        'measure',
+        'lead_created',
+        {
+            type: 'customer_action',
+        },
+        {
+            event_id: eventId,
+        }
+    )
 }
 
 // CTA clicks
